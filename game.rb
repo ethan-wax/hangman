@@ -1,14 +1,24 @@
+require 'json'
+
 class Game
 
-    def initialize
-        filename = '5desk.txt'
-        words = File.readlines filename
-        words.select! {|word| word.length >= 5 && word.length <= 12}
-        @word = words.sample.chomp.split("")
-        @current = Array.new(@word.length, "_")
-        @guesses = 5
-        @win = false
-        @wrong_letters = []
+    def initialize(load, word=nil, current=nil, guesses=0, win=false, wrong=nil)
+        unless load
+            filename = '5desk.txt'
+            words = File.readlines filename
+            words.select! {|word| word.length >= 5 && word.length <= 12}
+            @word = words.sample.chomp.split("")
+            @current = Array.new(@word.length, "_")
+            @guesses = 5
+            @win = false
+            @wrong_letters = []
+        else
+            @word=word
+            @current=current
+            @guesses=guesses
+            @win=win
+            @wrong_letters=wrong
+        end
     end
 
     def play_game
@@ -63,5 +73,5 @@ class Game
     end
 end
 
-g = Game.new
+g = Game.new(true, ["h", "e", "l", "l", "o"], ["h", "_", "_", "_", "o"], 3, false, ["a", "b"])
 g.play_game
