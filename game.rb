@@ -13,11 +13,11 @@ class Game
             @win = false
             @wrong_letters = []
         else
-            @word=word
-            @current=current
-            @guesses=guesses
-            @win=win
-            @wrong_letters=wrong
+            @word = word
+            @current = current
+            @guesses = guesses
+            @win = win
+            @wrong_letters = wrong
         end
     end
 
@@ -71,7 +71,19 @@ class Game
     def win
         puts "Congrats, you win!"
     end
-end
 
-g = Game.new(true, ["h", "e", "l", "l", "o"], ["h", "_", "_", "_", "o"], 3, false, ["a", "b"])
-g.play_game
+    def to_json
+        JSON.dump ({
+            :word = @word
+            :current = @current
+            :guesses = @guesses
+            :win = @win
+            :wrong = @wrong_letters
+        })
+    end
+
+    def self.from_json(string)
+        data = JSON.load string
+        self.new(data['word'], data['current'], data['guesses'], data['win'], data['wrong'])
+    end
+end
