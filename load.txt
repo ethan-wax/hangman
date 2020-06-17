@@ -1,0 +1,1 @@
+{"word":["y","u","m","m","y"],"current":["_","u","_","_","_"],"guesses":1,"win":false,"wrong":["a","e","i","o"]}

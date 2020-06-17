@@ -4,8 +4,9 @@ class Game
 
     def initialize(load, word=nil, current=nil, guesses=0, win=false, wrong=nil)
         unless load
-            filename = '5desk.txt'
-            words = File.readlines filename
+            file = File.open('5desk.txt', 'r')
+            words = file.readlines
+            file.close
             words.select! {|word| word.length >= 5 && word.length <= 12}
             @word = words.sample.chomp.split("")
             @current = Array.new(@word.length, "_")
@@ -25,6 +26,7 @@ class Game
         until @guesses == 0
             display()
             letter = guess_letter()
+            save() if letter == "save"
             check_letter(letter)
             if @current.none?("_")
                 win()
@@ -38,7 +40,7 @@ class Game
         puts ""
         puts "Incorrect letters:"
         p @wrong_letters
-        puts "Please input a letter and press enter:"
+        puts "Please input a letter and press enter or input 'save' to save and exit:"
         letter = gets.chomp
         return letter
     end
@@ -65,25 +67,39 @@ class Game
     end
 
     def lose
+        puts ""
+        puts "#{@current}"
+        puts ""
         puts "The correct answer was #{@word.join("")}"
     end
     
     def win
+        puts ""
+        puts "#{@current}"
+        puts ""
         puts "Congrats, you win!"
     end
 
     def to_json
         JSON.dump ({
-            :word = @word
-            :current = @current
-            :guesses = @guesses
-            :win = @win
-            :wrong = @wrong_letters
+            :word => @word,
+            :current => @current,
+            :guesses => @guesses,
+            :win => @win,
+            :wrong => @wrong_letters
         })
     end
 
     def self.from_json(string)
         data = JSON.load string
-        self.new(data['word'], data['current'], data['guesses'], data['win'], data['wrong'])
+        self.new(true, data['word'], data['current'], data['guesses'], data['win'], data['wrong'])
     end
+
+    def save
+        game = to_json
+        file = File.open('load.txt', 'w')
+        file.puts(game)
+        file.close
+        exit
+    end 
 end
